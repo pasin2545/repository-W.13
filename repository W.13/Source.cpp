@@ -1,69 +1,86 @@
 #include <iostream>
+#include <math.h>
 using namespace std;
-struct total
+struct kk
 {
     int data;
-    total* next;
+    kk* next;
 };
-total* newkk(int data)
+kk* newkk(int data)
 {
-    total* temp = new total;
+    kk* temp = new kk;
     temp->data = data;
     temp->next = NULL;
     return temp;
 }
-void inorder(total* root)
+void inorder(kk* root)
 {
     if (root != NULL)
     {
-        cout << root->data;
+
+        (root->data == 0) ? cout << "NO" << endl : cout << root->data << endl;
         inorder(root->next);
     }
 }
-total* _push(total** node, int data)
+kk* _push(kk** node, int data)
 {
-    total* temp = new total;
+    kk* temp = new kk;
     temp->data = data;
     temp->next = *node;
     *node = temp;
     return NULL;
 }
-total* insert(total* node, int data, int Qs[])
+kk* insert(kk* node, int data)
 {
     if (node == NULL)
+    {
+
         return newkk(data);
-    node->next = insert(node->next, data, Qs);
+    }
+
+    node->next = insert(node->next, data);
+
     return node;
 }
-int Qs[2000001] = {}, k;
+int _max(int x, int y)
+{
+    return (x > y) * x + (x <= y) * y;
+}
+
 int main()
 {
-    total* root = NULL;
-    int n, x;
+    kk* root = NULL;
+    int n;
     cin >> n;
+    long data[1001];
+
     for (int i = 0; i < n; i++)
+        cin >> data[i];
+
+    for (int j = 0; j < n; j++)
     {
-        cin >> x;
-        if (i == 0)
-            root = insert(root, x, Qs);
-        else
-            insert(root, x, Qs);
+        int max_res = 0;
+        long x = data[j];
+        for (long i = sqrt(x); i >= 2; i--)
+        {
+            long i_i = x, p = 0;
+            while (i_i % i == 0)
+            {
+                i_i /= i;
+                p++;
+            }
+
+            if (i_i == 1)
+            {
+                max_res = _max(p, max_res);
+            }
+        }
+
+        if (j > 0 and root != NULL)
+            insert(root, max_res);
+        if (j == 0 or root == NULL)
+            root = insert(root, max_res);
     }
-    while (root != NULL)
-    {
-        Qs[root->data]++;
-        root = root->next;
-    }
-    long long re = 0;
-    int a;
-    cin >> a;
-    int ch;
-    for (int i = 0; i <= a / 2; i++)
-    {
-        if (a - i == i)
-            re += (Qs[i] * (Qs[i] - 1)) / 2;
-        else
-            re += (Qs[i]) * (Qs[a - i]);
-    }
-    cout << re;
+
+    inorder(root);
 }
